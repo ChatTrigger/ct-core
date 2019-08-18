@@ -3,7 +3,6 @@ package com.chattriggers.ctjs.minecraft.objects
 import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.utils.kotlin.External
 import net.minecraft.client.settings.KeyBinding
-import net.minecraftforge.fml.client.registry.ClientRegistry
 import org.apache.commons.lang3.ArrayUtils
 
 import java.util.ArrayList
@@ -29,7 +28,8 @@ class KeyBind {
         }
 
         this.keyBinding = KeyBinding(description, keyCode, "ChatTriggers")
-        ClientRegistry.registerKeyBinding(this.keyBinding)
+//        TODO
+//        ClientRegistry.registerKeyBinding(this.keyBinding)
 
         keyBinds.add(this)
         isCustom = true

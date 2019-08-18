@@ -7,9 +7,8 @@ import com.chattriggers.ctjs.minecraft.wrappers.Player
 import com.chattriggers.ctjs.minecraft.wrappers.World
 import com.chattriggers.ctjs.utils.kotlin.External
 import com.chattriggers.ctjs.utils.kotlin.SoundCategory
+import com.chattriggers.ctjs.utils.kotlin.getPrivateValue
 import jdk.nashorn.api.scripting.ScriptObjectMirror
-import net.minecraft.client.audio.SoundManager
-import net.minecraftforge.fml.relauncher.ReflectionHelper
 import paulscode.sound.SoundSystem
 
 import java.io.File
@@ -86,12 +85,7 @@ class Sound(private val config: ScriptObjectMirror) {
     private fun loadSndSystem() {
         val sndManager = (Client.getMinecraft().soundHandler as MixinSoundHandler).sndManager
 
-        sndSystem = ReflectionHelper.getPrivateValue<SoundSystem, SoundManager>(
-            SoundManager::class.java,
-            sndManager,
-            "sndSystem",
-            "field_148620_e"
-        )
+        sndSystem = sndManager.getPrivateValue("sndSystem", "field_148620_e")
     }
 
     @Throws(MalformedURLException::class)

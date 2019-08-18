@@ -1,19 +1,19 @@
 package com.chattriggers.ctjs.minecraft.listeners
 
+import com.chattriggers.ctjs.events.ChatReceivedEvent
+import com.chattriggers.ctjs.events.Subscriber
 import com.chattriggers.ctjs.minecraft.libs.ChatLib
 import com.chattriggers.ctjs.minecraft.libs.EventLib
 import com.chattriggers.ctjs.print
 import com.chattriggers.ctjs.triggers.TriggerType
 import com.chattriggers.ctjs.utils.config.Config
-import net.minecraftforge.client.event.ClientChatReceivedEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 object ChatListener {
     val chatHistory = mutableListOf<String>()
     val actionBarHistory = mutableListOf<String>()
 
-    @SubscribeEvent
-    fun onReceiveChat(event: ClientChatReceivedEvent) {
+    @Subscriber
+    fun onReceiveChat(event: ChatReceivedEvent) {
         val type = EventLib.getType(event)
 
         when (type) {

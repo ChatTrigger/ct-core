@@ -12,13 +12,15 @@
     "MixinCrashReport",
     "MixinEntityFX",
     "MixinEntityPlayer",
-    "MixinClientCommandHandler",
     "MixinSoundHandler",
     "MixinSoundSystem",
     "MixinGuiNewChat",
     "MixinNetHandlerPlayClient",
     "MixinRenderManager",
-    "MixinEffectRenderer"
+    "MixinEffectRenderer",
+    "MixinGuiIngame",
+    "MixinGuiOverlayDebug",
+    "MixinGuiPlayerTabOverlay"
     //#if MC>10809
     //$$,"MixinParticle"
     //#endif

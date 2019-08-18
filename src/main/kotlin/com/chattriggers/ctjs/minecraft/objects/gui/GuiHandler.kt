@@ -1,10 +1,10 @@
 package com.chattriggers.ctjs.minecraft.objects.gui
 
+import com.chattriggers.ctjs.events.Subscriber
+import com.chattriggers.ctjs.events.TickEvent
 import com.chattriggers.ctjs.utils.kotlin.External
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
 
 @External
 object GuiHandler {
@@ -18,8 +18,8 @@ object GuiHandler {
         this.GUIs.clear()
     }
 
-    @SubscribeEvent
-    fun onTick(event: TickEvent.ClientTickEvent) {
+    @Subscriber
+    fun onTick(event: TickEvent) {
         this.GUIs.forEach {
             if (it.value == 0) {
                 Minecraft.getMinecraft().displayGuiScreen(it.key)

@@ -3,7 +3,6 @@ package com.chattriggers.ctjs.utils.console
 import com.chattriggers.ctjs.engine.ILoader
 import com.chattriggers.ctjs.triggers.OnTrigger
 import com.chattriggers.ctjs.utils.config.Config
-import io.sentry.Sentry
 import net.minecraft.network.ThreadQuickExitException
 import java.awt.*
 import java.awt.event.KeyEvent
@@ -108,8 +107,6 @@ class Console(val loader: ILoader?) {
     }
 
     fun printStackTrace(error: Throwable) {
-        Sentry.capture(error)
-
         if (Config.openConsoleOnError) {
             showConsole()
         }
@@ -118,11 +115,6 @@ class Console(val loader: ILoader?) {
     }
 
     fun printStackTrace(error: Throwable, trigger: OnTrigger) {
-        Sentry.getContext().addTag(
-                "method",
-                trigger.method.toString()
-        )
-
         printStackTrace(error)
     }
 

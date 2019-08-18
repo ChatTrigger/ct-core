@@ -1,5 +1,6 @@
 package com.chattriggers.ctjs.minecraft.libs
 
+import com.chattriggers.ctjs.events.ChatReceivedEvent
 import com.chattriggers.ctjs.minecraft.libs.renderer.Renderer
 import com.chattriggers.ctjs.minecraft.listeners.ChatListener
 import com.chattriggers.ctjs.minecraft.mixins.MixinGuiNewChat
@@ -12,7 +13,6 @@ import com.chattriggers.ctjs.utils.kotlin.External
 import com.chattriggers.ctjs.utils.kotlin.times
 import jdk.nashorn.api.scripting.ScriptObjectMirror
 import net.minecraft.client.gui.ChatLine
-import net.minecraftforge.client.event.ClientChatReceivedEvent
 import java.util.regex.Pattern
 
 @External
@@ -327,7 +327,7 @@ object ChatLib {
      */
     @JvmOverloads
     @JvmStatic
-    fun getChatMessage(event: ClientChatReceivedEvent, formatted: Boolean = false): String {
+    fun getChatMessage(event: ChatReceivedEvent, formatted: Boolean = false): String {
         return if (formatted) {
             replaceFormatting(EventLib.getMessage(event).formattedText)
         } else {

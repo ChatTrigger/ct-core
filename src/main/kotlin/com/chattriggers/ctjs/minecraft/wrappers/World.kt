@@ -98,9 +98,6 @@ object World {
     fun isRaining(): Boolean = getWorld()?.worldInfo?.isRaining ?: false
 
     @JvmStatic
-    fun getRainingStrength(): Float = getWorld()?.rainingStrength ?: -1f
-
-    @JvmStatic
     fun getTime(): Long = getWorld()?.worldTime ?: -1L
 
     @JvmStatic

@@ -1,7 +1,9 @@
 package com.chattriggers.ctjs.utils
 
 import com.chattriggers.ctjs.Reference
-import com.chattriggers.ctjs.engine.ModuleManager
+import com.chattriggers.ctjs.events.RenderGameOverlayEvent
+import com.chattriggers.ctjs.events.Subscriber
+import com.chattriggers.ctjs.events.WorldLoadEvent
 import com.chattriggers.ctjs.minecraft.libs.ChatLib
 import com.chattriggers.ctjs.minecraft.libs.FileLib
 import com.chattriggers.ctjs.minecraft.libs.renderer.Renderer
@@ -11,10 +13,6 @@ import com.chattriggers.ctjs.minecraft.wrappers.World
 import com.chattriggers.ctjs.print
 import com.chattriggers.ctjs.utils.config.Config
 import net.minecraft.client.renderer.GlStateManager
-import net.minecraftforge.client.event.RenderGameOverlayEvent
-import net.minecraftforge.event.world.WorldEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import java.net.UnknownHostException
 
 object UpdateChecker {
     private var worldLoaded = false
@@ -35,12 +33,12 @@ object UpdateChecker {
         this.updateAvailable = fileName != get
     }
 
-    @SubscribeEvent
-    fun worldLoad(event: WorldEvent.Load) {
+    @Subscriber
+    fun worldLoad(event: WorldLoadEvent) {
         this.worldLoaded = true
     }
 
-    @SubscribeEvent
+    @Subscriber
     fun renderOverlay(event: RenderGameOverlayEvent) {
         if (!this.worldLoaded) return
         this.worldLoaded = false

@@ -1,34 +1,23 @@
 package com.chattriggers.ctjs.minecraft.listeners
 
 import com.chattriggers.ctjs.CTJS
-import com.chattriggers.ctjs.minecraft.wrappers.Server
+import com.chattriggers.ctjs.events.*
 import com.chattriggers.ctjs.minecraft.wrappers.World
 import com.chattriggers.ctjs.minecraft.wrappers.objects.PlayerMP
 import com.chattriggers.ctjs.triggers.TriggerType
-import io.sentry.Sentry
-import net.minecraftforge.client.event.RenderGameOverlayEvent
-import net.minecraftforge.client.event.sound.PlaySoundEvent
-import net.minecraftforge.event.world.BlockEvent
-import net.minecraftforge.event.world.NoteBlockEvent
-import net.minecraftforge.event.world.WorldEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
-import javax.vecmath.Vector3d
 import javax.vecmath.Vector3f
 
 object WorldListener {
     private var shouldTriggerWorldLoad: Boolean = false
     private var playerList: MutableList<String> = mutableListOf()
 
-    @SubscribeEvent
-    fun onWorldLoad(event: WorldEvent.Load) {
+    @Subscriber
+    fun onWorldLoad(event: WorldLoadEvent) {
         this.playerList.clear()
         this.shouldTriggerWorldLoad = true
-
-        Sentry.getStoredClient().serverName = Server.getName()
     }
 
-    @SubscribeEvent
+    @Subscriber
     fun onRenderGameOverlay(event: RenderGameOverlayEvent) {
         // world loadExtra trigger
         if (!shouldTriggerWorldLoad) return
@@ -44,14 +33,13 @@ object WorldListener {
         CTJS.sounds.clear()
     }
 
-    @SubscribeEvent
-    fun onWorldUnload(event: WorldEvent.Unload) {
+    @Subscriber
+    fun onWorldUnload(event: WorldUnloadEvent) {
         TriggerType.WORLD_UNLOAD.triggerAll()
-        Sentry.getStoredClient().serverName = "Not connected"
     }
 
-    @SubscribeEvent
-    fun onSoundPlay(event: PlaySoundEvent) {
+    @Subscriber
+    fun onSoundPlay(event: SoundEvent) {
         val position = Vector3f(
                 event.sound.xPosF,
                 event.sound.yPosF,
@@ -75,40 +63,24 @@ object WorldListener {
         )
     }
 
-    @SubscribeEvent
-    fun noteBlockEventPlay(event: NoteBlockEvent.Play) {
-        val position = Vector3d(
-                event.pos.x.toDouble(),
-                event.pos.y.toDouble(),
-                event.pos.z.toDouble()
-        )
+//    @Subscriber
+//    fun noteBlockEventPlay(event: NoteBlockEvent.Play) {
+//        val position = Vector3d(
+//                event.pos.x.toDouble(),
+//                event.pos.y.toDouble(),
+//                event.pos.z.toDouble()
+//        )
+//
+//        TriggerType.NOTE_BLOCK_PLAY.triggerAll(
+//                position,
+//                event.note.name,
+//                event.octave,
+//                event
+//        )
+//    }
 
-        TriggerType.NOTE_BLOCK_PLAY.triggerAll(
-                position,
-                event.note.name,
-                event.octave,
-                event
-        )
-    }
-
-    @SubscribeEvent
-    fun noteBlockEventChange(event: NoteBlockEvent.Change) {
-        val position = Vector3d(
-                event.pos.x.toDouble(),
-                event.pos.y.toDouble(),
-                event.pos.z.toDouble()
-        )
-
-        TriggerType.NOTE_BLOCK_CHANGE.triggerAll(
-                position,
-                event.note.name,
-                event.octave,
-                event
-        )
-    }
-
-    @SubscribeEvent
-    fun updatePlayerList(event: TickEvent.ClientTickEvent) {
+    @Subscriber
+    fun updatePlayerList(event: TickEvent) {
         World.getAllPlayers().filter {
             !playerList.contains(it.getName())
         }.forEach {
@@ -132,8 +104,8 @@ object WorldListener {
         }
     }
 
-    @SubscribeEvent
-    fun blockBreak(event: BlockEvent.BreakEvent) {
+    @Subscriber
+    fun blockBreak(event: BlockBreakEvent) {
         TriggerType.BLOCK_BREAK.triggerAll(
             World.getBlockAt(event.pos.x, event.pos.y, event.pos.z),
             PlayerMP(event.player),

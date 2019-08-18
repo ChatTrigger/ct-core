@@ -1,9 +1,9 @@
 package com.chattriggers.ctjs.minecraft.objects.display
 
+import com.chattriggers.ctjs.events.EventBus
+import com.chattriggers.ctjs.events.RenderGameOverlayEvent
+import com.chattriggers.ctjs.events.Subscriber
 import com.chattriggers.ctjs.utils.kotlin.External
-import net.minecraftforge.client.event.RenderGameOverlayEvent
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import org.lwjgl.opengl.GL11
 
 @External
@@ -11,13 +11,13 @@ object DisplayHandler {
     private var displays = mutableListOf<Display>()
 
     init {
-        MinecraftForge.EVENT_BUS.register(this)
+        EventBus.register(this)
     }
 
     fun registerDisplay(display: Display) = this.displays.add(display)
     fun clearDisplays() = this.displays.clear()
 
-    @SubscribeEvent
+    @Subscriber
     fun renderDisplays(event: RenderGameOverlayEvent) {
         if (event.type != RenderGameOverlayEvent.ElementType.TEXT) return
 

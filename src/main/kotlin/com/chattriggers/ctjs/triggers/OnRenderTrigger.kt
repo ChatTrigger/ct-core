@@ -1,9 +1,8 @@
 package com.chattriggers.ctjs.triggers
 
 import com.chattriggers.ctjs.engine.ILoader
-import com.chattriggers.ctjs.engine.module.Module
+import com.chattriggers.ctjs.events.RenderGameOverlayEvent
 import com.chattriggers.ctjs.utils.kotlin.External
-import net.minecraftforge.client.event.RenderGameOverlayEvent
 
 @External
 class OnRenderTrigger(method: Any, triggerType: TriggerType, loader: ILoader) : OnTrigger(method, triggerType, loader) {
@@ -22,7 +21,7 @@ class OnRenderTrigger(method: Any, triggerType: TriggerType, loader: ILoader) : 
             throw IllegalArgumentException("Argument 0 must be a RenderGameOverlayEvent")
 
         val event = args[0] as RenderGameOverlayEvent
-        if (!triggerIfCanceled && event.isCanceled) return
+        if (!triggerIfCanceled && event.isCancelled()) return
 
         callMethod(*args)
     }

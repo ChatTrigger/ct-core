@@ -1,11 +1,10 @@
 package com.chattriggers.ctjs.triggers
 
+import com.chattriggers.ctjs.commands.ClientCommandHandler
 import com.chattriggers.ctjs.commands.Command
 import com.chattriggers.ctjs.commands.CommandHandler
 import com.chattriggers.ctjs.engine.ILoader
-import com.chattriggers.ctjs.engine.module.Module
 import com.chattriggers.ctjs.utils.kotlin.External
-import net.minecraftforge.client.ClientCommandHandler
 
 @External
 class OnCommandTrigger(method: Any, loader: ILoader) : OnTrigger(method, TriggerType.COMMAND, loader) {
@@ -54,7 +53,7 @@ class OnCommandTrigger(method: Any, loader: ILoader) : OnTrigger(method, Trigger
         }
 
         this.command = Command(this, this.commandName!!, "/${this.commandName}")
-        ClientCommandHandler.instance.registerCommand(this.command!!)
+        ClientCommandHandler.registerCommand(this.command!!)
         CommandHandler.getCommandList().add(this.command ?: return)
     }
 }

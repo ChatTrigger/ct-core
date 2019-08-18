@@ -12,6 +12,7 @@ import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.item.ItemBlock
 import net.minecraft.item.ItemStack
+import net.minecraft.nbt.NBTTagCompound
 import org.lwjgl.opengl.GL11
 import net.minecraft.item.Item as MCItem
 
@@ -117,7 +118,7 @@ class Item {
      */
     fun getRegistryName(): String {
         //#if MC<=10809
-        return this.item.registryName.toString()
+        return "minecraft:${this.item.unlocalizedName.substring(6)}"
         //#else
         //$$ return this.item.registryName.toString()
         //#endif
@@ -148,7 +149,7 @@ class Item {
 
     fun isEnchanted(): Boolean = itemStack.isItemEnchanted
 
-    fun getItemNBT(): String = itemStack.serializeNBT().toString()
+    fun getItemNBT(): String = itemStack.writeToNBT(NBTTagCompound()).toString()
 
     fun getMetadata(): Int = itemStack.metadata
 

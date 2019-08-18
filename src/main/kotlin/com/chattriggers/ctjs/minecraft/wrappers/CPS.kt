@@ -1,11 +1,12 @@
 package com.chattriggers.ctjs.minecraft.wrappers
 
+import com.chattriggers.ctjs.events.EventBus
+import com.chattriggers.ctjs.events.MouseEvent
+import com.chattriggers.ctjs.events.RenderGameOverlayEvent
+import com.chattriggers.ctjs.events.Subscriber
 import com.chattriggers.ctjs.minecraft.libs.EventLib
 import com.chattriggers.ctjs.utils.kotlin.External
-import net.minecraftforge.client.event.MouseEvent
-import net.minecraftforge.client.event.RenderGameOverlayEvent
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import kotlin.math.roundToInt
 
 @External
 object CPS {
@@ -20,10 +21,10 @@ object CPS {
     private var rightClicksMax = 0
 
     init {
-        MinecraftForge.EVENT_BUS.register(this)
+        EventBus.register(this)
     }
 
-    @SubscribeEvent
+    @Subscriber
     fun update(event: RenderGameOverlayEvent) {
         while (Client.getSystemTime() > sysTime + 50L) {
             sysTime += 50L
@@ -44,7 +45,7 @@ object CPS {
         }
     }
 
-    @SubscribeEvent
+    @Subscriber
     fun click(event: MouseEvent) {
         if (EventLib.getButtonState(event)) {
             when (event.button) {
@@ -66,7 +67,7 @@ object CPS {
 
         var clicks = 0.0
         for (click in leftClicksAverage) clicks += click
-        return Math.round(clicks / leftClicksAverage.size).toInt()
+        return (clicks / leftClicksAverage.size).roundToInt()
     }
 
     @JvmStatic
@@ -75,7 +76,7 @@ object CPS {
 
         var clicks = 0.0
         for (click in rightClicksAverage) clicks += click
-        return Math.round(clicks / rightClicksAverage.size).toInt()
+        return (clicks / rightClicksAverage.size).roundToInt()
     }
 
     private fun limitAverage(average: MutableList<Double>) {

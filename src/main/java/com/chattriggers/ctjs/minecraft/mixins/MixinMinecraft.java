@@ -1,5 +1,6 @@
 package com.chattriggers.ctjs.minecraft.mixins;
 
+import com.chattriggers.ctjs.CTJS;
 import com.chattriggers.ctjs.minecraft.objects.message.TextComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.shader.Framebuffer;
@@ -57,5 +58,31 @@ public abstract class MixinMinecraft {
         }
 
         ci.cancel();
+    }
+
+    @Inject(
+            method = "startGame",
+            at = @At(
+                    value = "INVOKE",
+                    shift = At.Shift.AFTER,
+                    target = "Lnet/minecraft/client/resources/IReloadableResourceManager;registerReloadListener(Lnet/minecraft/client/resources/IResourceManagerReloadListener;)V",
+                    ordinal = 0
+            )
+    )
+    private void preInitialization(CallbackInfo ci) {
+        CTJS.INSTANCE.preInit();
+    }
+
+    @Inject(
+            method = "startGame",
+            at = @At(
+                    value = "FIELD",
+                    shift = At.Shift.AFTER,
+                    target = "Lnet/minecraft/client/Minecraft;effectRenderer:Lnet/minecraft/client/particle/EffectRenderer;",
+                    ordinal = 0
+            )
+    )
+    private void init(CallbackInfo ci) {
+        CTJS.INSTANCE.init();
     }
 }

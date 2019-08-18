@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityPlayer.class)
 public class MixinEntityPlayer implements IMixinEntityPlayer {
-    @Shadow(remap = false)
+//    @Shadow(remap = false)
     private String displayname;
 
     @Shadow
@@ -36,6 +36,6 @@ public class MixinEntityPlayer implements IMixinEntityPlayer {
             cancellable = true
     )
     private void injectItemThrowTrigger(boolean dropAll, CallbackInfoReturnable<EntityItem> cir) {
-        if (ClientListener.INSTANCE.onDropItem((EntityPlayer) (Object) this, inventory.getCurrentItem())) cir.setReturnValue(null);
+//        if (ClientListener.INSTANCE.onDropItem((EntityPlayer) (Object) this, inventory.getCurrentItem())) cir.setReturnValue(null);
     }
 }

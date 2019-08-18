@@ -63,7 +63,7 @@ open class Block {
      */
     fun getRegistryName(): String {
         //#if MC<=10809
-        return this.block.registryName
+        return "minecraft:${this.block.unlocalizedName.substring(6)}"
         //#else
         //$$ return this.block.registryName.toString();
         //#endif
@@ -127,11 +127,9 @@ open class Block {
      *
      * @return whether the block can be mined
      */
-    fun canBeHarvested(): Boolean = block.canHarvestBlock(World.getWorld(), blockPos, Player.getPlayer())
+    fun canBeHarvested(): Boolean = Player.getPlayer()?.canHarvestBlock(block) ?: false
 
     fun canBeHarvestedWith(item: Item): Boolean = item.canHarvest(this)
-
-    fun getHarvestLevel(): Int = block.getHarvestLevel(getDefaultState())
 
     fun isTranslucent(): Boolean {
         //#if MC<=10809
@@ -143,5 +141,5 @@ open class Block {
         //#endif
     }
 
-    override fun toString(): String = "Block{name=${block.registryName}, x=${getX()}, y=${getY()}, z=${getZ()}}"
+    override fun toString(): String = "Block{name=${getRegistryName()}, x=${getX()}, y=${getY()}, z=${getZ()}}"
 }

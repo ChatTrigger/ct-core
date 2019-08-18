@@ -1,5 +1,6 @@
 package com.chattriggers.ctjs.minecraft.objects.message
 
+import com.chattriggers.ctjs.events.ChatReceivedEvent
 import com.chattriggers.ctjs.minecraft.libs.ChatLib
 import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.minecraft.wrappers.Player
@@ -7,7 +8,6 @@ import com.chattriggers.ctjs.utils.kotlin.BaseTextComponent
 import com.chattriggers.ctjs.utils.kotlin.ChatPacket
 import com.chattriggers.ctjs.utils.kotlin.External
 import com.chattriggers.ctjs.utils.kotlin.ITextComponent
-import net.minecraftforge.client.event.ClientChatReceivedEvent
 
 //#if MC>=11202
 //$$ import net.minecraft.util.text.ChatType
@@ -27,7 +27,7 @@ class Message {
      *
      * @param event the chat event
      */
-    constructor(event: ClientChatReceivedEvent): this(event.message)
+    constructor(event: ChatReceivedEvent): this(event.message)
 
     /**
      * Creates a new Message object from an IChatComponent.

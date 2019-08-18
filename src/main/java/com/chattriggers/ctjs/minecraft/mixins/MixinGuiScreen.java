@@ -1,5 +1,6 @@
 package com.chattriggers.ctjs.minecraft.mixins;
 
+import com.chattriggers.ctjs.commands.ClientCommandHandler;
 import com.chattriggers.ctjs.minecraft.objects.message.TextComponent;
 import com.chattriggers.ctjs.triggers.TriggerType;
 import net.minecraft.client.Minecraft;
@@ -29,6 +30,8 @@ public abstract class MixinGuiScreen {
             cancellable = true
     )
     private void onSendChatMessage(String msg, boolean addToChat, CallbackInfo ci) {
+        if (ClientCommandHandler.INSTANCE.executeCommand(mc.thePlayer, msg) != 0) ci.cancel();
+
         TriggerType.MESSAGE_SENT.triggerAll(msg, ci);
     }
 

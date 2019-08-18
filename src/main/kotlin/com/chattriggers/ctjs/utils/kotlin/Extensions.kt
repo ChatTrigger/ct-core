@@ -38,3 +38,11 @@ operator fun String.times(times: Number): String {
 
     return stringBuilder.toString()
 }
+
+fun <T : Any, R> T.getPrivateValue(vararg names: String): R {
+    return this::class.java.fields.find { it.name in names }!!.get(this) as R
+}
+
+fun <T : Any, R> T.setPrivateValue(value: R, vararg names: String) {
+    return this::class.java.fields.find { it.name in names }!!.set(this, value)
+}

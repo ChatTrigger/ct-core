@@ -1,5 +1,6 @@
 package com.chattriggers.ctjs.minecraft.listeners
 
+import com.chattriggers.ctjs.events.*
 import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.minecraft.wrappers.Scoreboard
 import com.chattriggers.ctjs.minecraft.wrappers.World
@@ -10,13 +11,9 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.item.ItemStack
-import net.minecraftforge.client.event.*
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent
-import net.minecraftforge.event.entity.player.PlayerInteractEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
 import org.lwjgl.input.Mouse
 import org.lwjgl.opengl.GL11
+import sun.audio.AudioPlayer.player
 import javax.vecmath.Vector3d
 
 object ClientListener {
@@ -36,8 +33,8 @@ object ClientListener {
             this.mouseState[i] = false
     }
 
-    @SubscribeEvent
-    fun onTick(event: TickEvent.ClientTickEvent) {
+    @Subscriber
+    fun onTick(event: TickEvent) {
         if (World.getWorld() == null) return
 
         TriggerType.TICK.triggerAll(this.ticksPassed)
@@ -56,10 +53,10 @@ object ClientListener {
             if (Mouse.isButtonDown(button) == this.mouseState[button]) continue
 
             TriggerType.CLICKED.triggerAll(
-                    Client.getMouseX(),
-                    Client.getMouseY(),
-                    button,
-                    Mouse.isButtonDown(button)
+                Client.getMouseX(),
+                Client.getMouseY(),
+                button,
+                Mouse.isButtonDown(button)
             )
 
             this.mouseState[button] = Mouse.isButtonDown(button)
@@ -77,23 +74,23 @@ object ClientListener {
             return
 
         TriggerType.DRAGGED.triggerAll(
-                Client.getMouseX() - (this.draggedState[button]?.x ?: 0f),
-                Client.getMouseY() - (this.draggedState[button]?.y ?: 0f),
-                Client.getMouseX(),
-                Client.getMouseY(),
-                button
+            Client.getMouseX() - (this.draggedState[button]?.x ?: 0f),
+            Client.getMouseY() - (this.draggedState[button]?.y ?: 0f),
+            Client.getMouseX(),
+            Client.getMouseY(),
+            button
         )
 
         // update dragged
         this.draggedState[button] = State(Client.getMouseX(), Client.getMouseY())
     }
 
-    @SubscribeEvent
-    fun onRenderWorld(event: RenderWorldLastEvent) {
+    @Subscriber
+    fun onRenderWorld(event: FinishRenderWorldEvent) {
         TriggerType.RENDER_WORLD.triggerAll(event.partialTicks)
     }
 
-    @SubscribeEvent
+    @Subscriber
     fun onRenderGameOverlay(event: RenderGameOverlayEvent) {
         GL11.glPushMatrix()
         handleOverlayTriggers(event)
@@ -116,6 +113,7 @@ object ClientListener {
             RenderGameOverlayEvent.ElementType.DEBUG -> TriggerType.RENDER_DEBUG.triggerAll(event)
             RenderGameOverlayEvent.ElementType.BOSSHEALTH -> TriggerType.RENDER_BOSS_HEALTH.triggerAll(event)
             RenderGameOverlayEvent.ElementType.HEALTH -> TriggerType.RENDER_HEALTH.triggerAll(event)
+            RenderGameOverlayEvent.ElementType.ARMOR -> TriggerType.RENDER_ARMOR.triggerAll(event)
             RenderGameOverlayEvent.ElementType.FOOD -> TriggerType.RENDER_FOOD.triggerAll(event)
             RenderGameOverlayEvent.ElementType.HEALTHMOUNT -> TriggerType.RENDER_MOUNT_HEALTH.triggerAll(event)
             RenderGameOverlayEvent.ElementType.EXPERIENCE -> TriggerType.RENDER_EXPERIENCE.triggerAll(event)
@@ -125,72 +123,69 @@ object ClientListener {
         }
     }
 
-    @SubscribeEvent
+    @Subscriber
     fun onGuiOpened(event: GuiOpenEvent) {
         TriggerType.GUI_OPENED.triggerAll(event)
     }
 
-    @SubscribeEvent
-    fun onBlockHighlight(event: DrawBlockHighlightEvent) {
-        if (event.target == null || event.target.blockPos == null) return
+    @Subscriber
+    fun onBlockHighlight(event: BlockHighlightEvent) {
+        if (event.target.blockPos == null) return
 
         val position = Vector3d(
-                event.target.blockPos.x.toDouble(),
-                event.target.blockPos.y.toDouble(),
-                event.target.blockPos.z.toDouble()
+            event.target.blockPos.x.toDouble(),
+            event.target.blockPos.y.toDouble(),
+            event.target.blockPos.z.toDouble()
         )
 
         TriggerType.BLOCK_HIGHLIGHT.triggerAll(position, event)
     }
 
-    @SubscribeEvent
-    fun onPickupItem(event: EntityItemPickupEvent) {
-        if (event.entityPlayer !is EntityPlayerMP) return
+    @Subscriber
+    fun onPickupItem(event: ItemPickupEvent) {
+        if (event.player !is EntityPlayerMP) return
 
-        val player = event.entityPlayer as EntityPlayerMP
+        val player = event.player
 
         val item = event.item
 
         val position = Vector3d(
-                item.posX,
-                item.posY,
-                item.posZ
+            item.posX,
+            item.posY,
+            item.posZ
         )
         val motion = Vector3d(
-                item.motionX,
-                item.motionY,
-                item.motionZ
+            item.motionX,
+            item.motionY,
+            item.motionZ
         )
 
         TriggerType.PICKUP_ITEM.triggerAll(
-                //#if MC<=10809
-                Item(item.entityItem),
-                //#else
-                //$$ Item(item.item),
-                //#endif
-                PlayerMP(player),
-                position,
-                motion,
-                event
+            //#if MC<=10809
+            Item(item.entityItem),
+            //#else
+            //$$ Item(item.item),
+            //#endif
+            PlayerMP(player),
+            position,
+            motion,
+            event
         )
     }
 
-    fun onDropItem(player: EntityPlayer, item: ItemStack?): Boolean {
-        if (player !is EntityPlayerMP) return false
-
-        val event = CancellableEvent()
+    @Subscriber
+    fun onDropItem(event: ItemDropEvent) {
+        if (event.player !is EntityPlayerMP) return
 
         TriggerType.DROP_ITEM.triggerAll(
-                Item(item),
-                PlayerMP(player),
-                event
+            Item(event.item),
+            PlayerMP(event.player),
+            event
         )
-
-        return event.isCancelled()
     }
 
-    @SubscribeEvent
-    fun onGuiRender(e: GuiScreenEvent.BackgroundDrawnEvent) {
+    @Subscriber
+    fun onGuiRender(e: GuiDrawEvent) {
         GlStateManager.pushMatrix()
 
         TriggerType.GUI_RENDER.triggerAll(
@@ -203,7 +198,7 @@ object ClientListener {
     }
 
     //#if MC<=10809
-    @SubscribeEvent
+    @Subscriber
     fun onLeftClick(e: PlayerInteractEvent) {
         val action = when (e.action) {
             PlayerInteractEvent.Action.LEFT_CLICK_BLOCK -> PlayerInteractAction.LEFT_CLICK_BLOCK
@@ -212,12 +207,10 @@ object ClientListener {
             null -> PlayerInteractAction.UNKNOWN
         }
 
-
-
         TriggerType.PLAYER_INTERACT.triggerAll(
-                action,
-                Vector3d((e.pos?.x ?: 0).toDouble(), (e.pos?.y ?: 0).toDouble(), (e.pos?.z ?: 0).toDouble()),
-                e
+            action,
+            Vector3d((e.pos?.x ?: 0).toDouble(), (e.pos?.y ?: 0).toDouble(), (e.pos?.z ?: 0).toDouble()),
+            e
         )
     }
     //#else

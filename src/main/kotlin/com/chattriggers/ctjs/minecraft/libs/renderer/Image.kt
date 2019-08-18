@@ -1,11 +1,11 @@
 package com.chattriggers.ctjs.minecraft.libs.renderer
 
 import com.chattriggers.ctjs.CTJS
+import com.chattriggers.ctjs.events.EventBus
+import com.chattriggers.ctjs.events.RenderGameOverlayEvent
+import com.chattriggers.ctjs.events.Subscriber
 import com.chattriggers.ctjs.utils.kotlin.External
 import net.minecraft.client.renderer.texture.DynamicTexture
-import net.minecraftforge.client.event.RenderGameOverlayEvent
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
@@ -18,7 +18,7 @@ class Image(var image: BufferedImage?) {
     private val textureHeight = image?.height ?: 0
 
     init {
-        MinecraftForge.EVENT_BUS.register(this)
+        EventBus.register(this)
     }
 
     @JvmOverloads
@@ -34,7 +34,7 @@ class Image(var image: BufferedImage?) {
                 texture = DynamicTexture(image)
                 image = null
 
-                MinecraftForge.EVENT_BUS.unregister(this)
+                EventBus.unregister(this)
             } catch (e: Exception) {
                 // Unlucky. This probably wasn't a rendering context.
                 println("Trying to bake texture in a non-rendering context.")
@@ -46,13 +46,13 @@ class Image(var image: BufferedImage?) {
         return this.texture
     }
 
-    @SubscribeEvent
+    @Subscriber
     fun onRender(event: RenderGameOverlayEvent) {
         if (image != null) {
             texture = DynamicTexture(image)
             image = null
 
-            MinecraftForge.EVENT_BUS.unregister(this)
+            EventBus.unregister(this)
         }
     }
 

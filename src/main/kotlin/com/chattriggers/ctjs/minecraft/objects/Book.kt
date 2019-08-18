@@ -6,6 +6,8 @@ import com.chattriggers.ctjs.minecraft.wrappers.Client
 import com.chattriggers.ctjs.minecraft.wrappers.Player
 import com.chattriggers.ctjs.utils.kotlin.External
 import com.chattriggers.ctjs.utils.kotlin.TextComponentSerializer
+import com.chattriggers.ctjs.utils.kotlin.getPrivateValue
+import com.chattriggers.ctjs.utils.kotlin.setPrivateValue
 import net.minecraft.client.gui.GuiScreenBook
 import net.minecraft.init.Items
 import net.minecraft.item.ItemStack
@@ -13,7 +15,6 @@ import net.minecraft.nbt.NBTBase
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.nbt.NBTTagList
 import net.minecraft.nbt.NBTTagString
-import net.minecraftforge.fml.relauncher.ReflectionHelper
 
 @External
 class Book(bookName: String) {
@@ -87,12 +88,7 @@ class Book(bookName: String) {
         book.tagCompound = bookData
 
         if (bookScreen != null) {
-            ReflectionHelper.setPrivateValue<GuiScreenBook, NBTTagList>(
-                    GuiScreenBook::class.java,
-                    bookScreen, pages,
-                    "field_146483_y",
-                    "bookPages"
-            )
+            bookScreen!!.setPrivateValue(pages, "field_146483_y", "bookPages")
         }
     }
 
@@ -102,13 +98,7 @@ class Book(bookName: String) {
             bookScreen = GuiScreenBook(Player.getPlayer(), book, false)
         }
 
-        ReflectionHelper.setPrivateValue<GuiScreenBook, Int>(
-                GuiScreenBook::class.java,
-                bookScreen,
-                page,
-                "currPage",
-                "field_146484_x"
-        )
+        bookScreen!!.setPrivateValue(page, "currPage", "field_146484_x")
 
         GuiHandler.openGui(bookScreen ?: return)
     }
@@ -118,7 +108,7 @@ class Book(bookName: String) {
     }
 
     fun getCurrentPage(): Int {
-        return if (!isOpen()) -1 else ReflectionHelper.getPrivateValue<Int, GuiScreenBook>(GuiScreenBook::class.java, bookScreen, "currPage", "field_146484_x")
+        return if (!isOpen()) -1 else bookScreen!!.getPrivateValue("currPage", "field_146484_x")
     }
 
     operator fun NBTTagCompound.set(tag: String, value: NBTBase) {

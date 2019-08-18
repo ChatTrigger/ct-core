@@ -2,13 +2,13 @@ package com.chattriggers.ctjs.minecraft.wrappers
 
 import com.chattriggers.ctjs.utils.kotlin.External
 import net.minecraft.scoreboard.ScorePlayerTeam
-import net.minecraftforge.client.GuiIngameForge
 
 @External
 object Scoreboard {
     private var needsUpdate = true
     private var scoreboardNames = mutableListOf<Score>()
     private var scoreboardTitle = ""
+    internal var shouldRender = true
 
     /**
      * Alias for [Scoreboard.getTitle].
@@ -109,11 +109,11 @@ object Scoreboard {
 
     @JvmStatic
     fun setShouldRender(shouldRender: Boolean) {
-        GuiIngameForge.renderObjective = shouldRender
+        this.shouldRender = shouldRender
     }
 
     @JvmStatic
-    fun getShouldRender() = GuiIngameForge.renderObjective
+    fun getShouldRender() = shouldRender
 
     private fun updateNames() {
         scoreboardNames.clear()
